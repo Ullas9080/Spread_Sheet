@@ -1,0 +1,34 @@
+# --- Dependencies ---
+node_modules/
+
+# --- Environment & Secrets ---
+.env
+client_secret_*.json
+
+# --- Logs ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# --- Runtime files ---
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# --- Coverage / Testing ---
+coverage/
+.cache/
+
+# --- OS / Editor junk ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.iml
+
+# --- Misc ---
+*.swp
+*.tmp
