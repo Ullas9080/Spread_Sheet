@@ -4,9 +4,7 @@ import { uploadFile } from "../controller/uploadController.js";
 
 const router = express.Router();
 
-const upload = multer({
-  storage: multer.memoryStorage()
-});
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post("/upload", upload.single("file"), uploadFile);
 

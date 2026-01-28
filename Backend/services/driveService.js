@@ -4,27 +4,25 @@ import { Readable } from "stream";
 
 export const uploadToDrive = async (file) => {
   if (!oauth2Client.credentials?.access_token) {
-    throw new Error("User not authenticated with Google");
+    throw new Error("User not authenticated");
   }
 
-  const drive = google.drive({
-    version: "v3",
-    auth: oauth2Client
-  });
+  const drive = google.drive({ version: "v3", auth: oauth2Client });
 
-  const bufferStream = new Readable();
-  bufferStream.push(file.buffer);
-  bufferStream.push(null);
+  const stream = new Readable();
+  stream.push(file.buffer);
+  stream.push(null);
 
   const response = await drive.files.create({
     requestBody: {
-      name: file.originalname
+      name: file.originalname,
+      mimeType: "application/vnd.google-apps.spreadsheet"
     },
     media: {
       mimeType: file.mimetype,
-      body: bufferStream
+      body: stream
     }
   });
 
-  return response.data;
+  return response.data.id;
 };

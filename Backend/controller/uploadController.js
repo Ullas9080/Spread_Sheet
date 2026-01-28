@@ -2,31 +2,19 @@ import { uploadToDrive } from "../services/driveService.js";
 
 export const uploadFile = async (req, res) => {
   try {
-    console.log("Upload API hit");
-
     const file = req.file;
-
     if (!file) {
-      return res.status(400).json({
-        success: false,
-        message: "No file uploaded"
-      });
+      return res.status(400).json({ success: false });
     }
 
-    const driveFile = await uploadToDrive(file);
+    const rawSpreadsheetId = await uploadToDrive(file);
 
-    return res.json({
+    res.json({
       success: true,
-      message: "File uploaded to Google Drive",
-      fileId: driveFile.id
+      rawSpreadsheetId
     });
 
-  } catch (error) {
-    console.error("Upload error:", error.message);
-
-    return res.status(500).json({
-      success: false,
-      message: error.message
-    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };

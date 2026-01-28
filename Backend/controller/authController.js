@@ -3,7 +3,11 @@ import { oauth2Client } from "../config/googleAuth.js";
 
 export const googleLogin = (req, res) => {
   const authUrl = oauth2Client.generateAuthUrl({
-    scope: ["https://www.googleapis.com/auth/drive.file"]
+  scope : [
+  "https://www.googleapis.com/auth/drive",
+  "https://www.googleapis.com/auth/spreadsheets",
+  "https://www.googleapis.com/auth/script.external_request"
+]
   });
 
   res.redirect(authUrl);

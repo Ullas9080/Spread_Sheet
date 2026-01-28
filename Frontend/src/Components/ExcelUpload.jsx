@@ -1,7 +1,14 @@
 import { Button, Box } from "@mui/material";
 import * as XLSX from "xlsx";
 
-const ExcelUpload = ({ setRows, setFile, file, setStatus, uploadExcel }) => {
+const ExcelUpload = ({
+  setRows,
+  setFile,
+  setStatus,
+  setRawSpreadsheetId,
+  uploadExcel
+}) => {
+
   const handleFileSelect = async (event) => {
     const selectedFile = event.target.files[0];
     if (!selectedFile) return;
@@ -16,23 +23,24 @@ const ExcelUpload = ({ setRows, setFile, file, setStatus, uploadExcel }) => {
 
       const data = XLSX.utils.sheet_to_json(sheet, {
         header: 1,
-        defval: "",
+        defval: ""
       });
 
       setRows(data);
     };
-    try {
-      if (!file) {
-        alert("Please select an Excel file");
-        return;
-      }
-      setStatus("Uploading...");
-      await uploadExcel(file);
-      setStatus("Uploaded to Google Drive ✅");
-    } catch (error) {
-      setStatus(error.message || "Upload failed ❌");
-    }
     reader.readAsBinaryString(selectedFile);
+
+ 
+    try {
+      setStatus("Uploading...");
+      const res = await uploadExcel(selectedFile);
+
+      setRawSpreadsheetId(res.rawSpreadsheetId);
+
+      setStatus("Uploaded to Google Drive ✅");
+    } catch (err) {
+      setStatus(err.message || "Upload failed ❌");
+    }
   };
 
   return (
@@ -46,14 +54,6 @@ const ExcelUpload = ({ setRows, setFile, file, setStatus, uploadExcel }) => {
           onChange={handleFileSelect}
         />
       </Button>
-
-      {/* <Button
-        variant="contained"
-        sx={{ ml: 2 }}
-        onClick={handleUpload}
-      >
-        Upload
-      </Button> */}
     </Box>
   );
 };
