@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
-import { Container, Typography, Button } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Container, Typography } from "@mui/material";
 
 import GoogleLogin from "./components/GoogleLogin";
 import ExcelUpload from "./components/ExcelUpload";
 import ExcelPreview from "./components/ExcelPreview";
+import FormulaList from "./components/FormulaList";
 
 import { uploadExcel, processSheet } from "./service/api";
 
@@ -23,32 +24,33 @@ function App() {
     }
   }, []);
 
- const handleCalculate = async () => {
-  try {
-    setStatus("Processing formulas...");
+  const handleCalculate = async (formulaKey) => {
+    try {
+      
+setStatus("Processing formulas...");
 
-    const res = await processSheet(rawSpreadsheetId);
+      const res = await processSheet({
+        rawSpreadsheetId,
+        formulaKey
+      });
 
-    console.log("Frontend response:", res);
+      if (!res.newSheetUrl) {
+        alert("Sheet URL not received ❌");
+        return;
+      }
 
-    if (!res.newSheetUrl) {
-      alert("Sheet URL not received ❌");
-      return;
+      setStatus("Calculation completed ✅");
+      window.open(res.newSheetUrl, "_blank");
+
+    } catch (err) {
+      setStatus("Processing failed ❌");
     }
-
-    setStatus("Calculation completed ✅");
-
-    window.open(res.newSheetUrl, "_blank");
-
-  } catch (err) {
-    setStatus("Processing failed ❌");
-  }
-};
+  };
 
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
       <Typography variant="h5" gutterBottom>
-        Excel Upload → Formula → New Sheet
+        Excel Upload → Select Formula → Apply
       </Typography>
 
       {!isLoggedIn && <GoogleLogin />}
@@ -66,15 +68,11 @@ function App() {
           <Typography sx={{ mb: 2 }}>{status}</Typography>
 
           <ExcelPreview rows={rows} />
+
           {rawSpreadsheetId && (
-            <Button
-              variant="contained"
-              color="success"
-              sx={{ mt: 2 }}
-              onClick={handleCalculate}
-            >
-              Calculate (Apply Formula)
-            </Button>
+            <FormulaList
+              onCalculate={handleCalculate}
+            />
           )}
         </>
       )}

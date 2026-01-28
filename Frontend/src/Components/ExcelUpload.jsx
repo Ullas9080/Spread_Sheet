@@ -30,13 +30,10 @@ const ExcelUpload = ({
     };
     reader.readAsBinaryString(selectedFile);
 
- 
     try {
       setStatus("Uploading...");
       const res = await uploadExcel(selectedFile);
-
       setRawSpreadsheetId(res.rawSpreadsheetId);
-
       setStatus("Uploaded to Google Drive ✅");
     } catch (err) {
       setStatus(err.message || "Upload failed ❌");

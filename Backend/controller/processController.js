@@ -2,13 +2,13 @@ import axios from "axios";
 
 export const processSheet = async (req, res) => {
   try {
-    const { rawSpreadsheetId } = req.body;
+    const { rawSpreadsheetId,formulaKey } = req.body;
 
     const response = await axios.post(
       process.env.APPS_SCRIPT_URL,
-      { rawSpreadsheetId }
+      { rawSpreadsheetId ,formulaKey }
     );
-
+console.log( rawSpreadsheetId,formulaKey)
     const parsed =
       typeof response.data === "string"
         ? JSON.parse(response.data)
@@ -16,7 +16,7 @@ export const processSheet = async (req, res) => {
 
     console.log("Parsed Apps Script response:", parsed);
 
-    if (!parsed.url) {
+    if (!parsed.newSheetUrl) {
       return res.status(500).json({
         error: "Sheet URL missing from Apps Script"
       });
@@ -24,7 +24,7 @@ export const processSheet = async (req, res) => {
 
     res.json({
       success: true,
-      newSheetUrl: parsed.url
+      newSheetUrl: parsed.newSheetUrl
     });
 
   } catch (err) {
